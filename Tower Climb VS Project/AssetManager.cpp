@@ -20,6 +20,43 @@ sf::Texture& AssetManager::RequestTexture(std::string textureName)
     }
 }
 
+sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string soundBufferName)
+{
+    // TODO: insert return statement here
+    auto pairFound = soundBuffers.find(soundBufferName);
+
+    if (pairFound != soundBuffers.end())
+    {
+        //Found an existing sound buffer - use it.
+        return pairFound->second; 
+    }
+    else
+    {
+        sf::SoundBuffer& newSoundBuffer = soundBuffers[soundBufferName];
+        newSoundBuffer.loadFromFile(soundBufferName);
+        return newSoundBuffer;
+    }
+}
+
+sf::Font& AssetManager::RequestFont(std::string fontName)
+{
+    // TODO: insert return statement here
+        // TODO: insert return statement here
+    auto pairFound = fonts.find(fontName);
+
+    if (pairFound != fonts.end())
+    {
+        //Found an existing font - use it.
+        return pairFound->second;
+    }
+    else
+    {
+        sf::Font& newFont = fonts[fontName];
+        newFont.loadFromFile(fontName);
+        return newFont;
+    }
+}
+
 void AssetManager::DestroyAllAssets()
 {
     textures.clear();
