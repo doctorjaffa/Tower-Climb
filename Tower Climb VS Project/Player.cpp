@@ -3,13 +3,18 @@
 
 enum class PhysicsType {
     FORWARD_EULER,
-    BACKWARD_EULER
+    BACKWARD_EULER,
+    SYMPLECTIC_EULER,
+    POSITION_VERLET,
+    VELOCITY_VERLET
+
 };
 
 
 Player::Player()
 	: SpriteObject()
 	, position(100, 300)
+    , twoFramesOldPos(100, 300)
 	, velocity()
 	, acceleration()
 {
@@ -22,7 +27,7 @@ Player::Player()
 void Player::Update(sf::Time frameTime)
 {
     const float DRAG_MULT = 0.999f;
-    const PhysicsType physics = PhysicsType::BACKWARD_EULER;
+    const PhysicsType physics = PhysicsType::VELOCITY_VERLET;
 
     switch (physics)
     {
@@ -56,6 +61,56 @@ void Player::Update(sf::Time frameTime)
             position = position + velocity * frameTime.asSeconds();
         }
         break;
+
+    case PhysicsType::SYMPLECTIC_EULER:
+        {
+            // SEMI-IMPLICIT EULER (SYMPLECTIC_EULER)
+
+            velocity = velocity + acceleration * frameTime.asSeconds();
+
+            // Drag
+            velocity = velocity * DRAG_MULT;
+
+            position = position + velocity * frameTime.asSeconds();
+
+            // Update acceleration
+            UpdateAcceleration();
+        }
+        break;
+
+    case PhysicsType::POSITION_VERLET:
+    {
+        // Update acceleration
+        UpdateAcceleration();
+
+        sf::Vector2f lastFramePos = position;
+
+        // Current frame's position 
+        position = 2.0f*lastFramePos - twoFramesOldPos + acceleration * frameTime.asSeconds() * frameTime.asSeconds();
+
+        // Two frames ago (for next frame)
+        twoFramesOldPos = lastFramePos;
+    }
+    break;
+
+    case PhysicsType::VELOCITY_VERLET:
+    {
+        // Get half frame velocity using previous frame's acceleration
+        sf::Vector2f halfFrameVelocity = velocity + acceleration * frameTime.asSeconds() / 2.0f;
+
+        //Get new frame's position using half frame velocity
+        position = position + halfFrameVelocity * frameTime.asSeconds();
+
+        // Update acceleration
+        UpdateAcceleration();
+
+        // Get new frame's velocity using half frame velocity and updated acceleration
+        velocity = halfFrameVelocity + acceleration * frameTime.asSeconds() / 2.0f;
+
+        // Drag
+        velocity = velocity * DRAG_MULT;
+    }
+    break;
 
     default:
         break;
