@@ -1,6 +1,8 @@
 #pragma once
 #include "Screen.h"
 #include "Player.h"
+#include "Door.h"
+#include "Platform.h"
 #include <SFML/Graphics.hpp>
 
 class Game;
@@ -19,5 +21,7 @@ public:
 private:
 
     Player player;
+    Door tempDoor;
+    Platform tempPlatform;
 };
 
