@@ -1,5 +1,6 @@
 #pragma once
 #include "Screen.h"
+#include "Player.h"
 #include <SFML/Graphics.hpp>
 
 class Game;
@@ -17,6 +18,6 @@ public:
 
 private:
 
-    sf::Sprite tempSprite;
+    Player player;
 };
 

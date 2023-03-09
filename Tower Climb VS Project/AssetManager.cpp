@@ -1,6 +1,8 @@
 #include "AssetManager.h"
 
 std::map<std::string, sf::Texture> AssetManager::textures;
+std::map<std::string, sf::SoundBuffer> AssetManager::soundBuffers;
+std::map<std::string, sf::Font> AssetManager::fonts;
 
 sf::Texture& AssetManager::RequestTexture(std::string textureName)
 {
@@ -41,7 +43,6 @@ sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string soundBufferName)
 sf::Font& AssetManager::RequestFont(std::string fontName)
 {
     // TODO: insert return statement here
-        // TODO: insert return statement here
     auto pairFound = fonts.find(fontName);
 
     if (pairFound != fonts.end())
@@ -60,4 +61,6 @@ sf::Font& AssetManager::RequestFont(std::string fontName)
 void AssetManager::DestroyAllAssets()
 {
     textures.clear();
+    soundBuffers.clear();
+    fonts.clear();
 }
