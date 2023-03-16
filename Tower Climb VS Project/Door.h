@@ -8,8 +8,5 @@ public:
 
     Door();
 
-private:
-
-    sf::Vector2f position;
 };
 
