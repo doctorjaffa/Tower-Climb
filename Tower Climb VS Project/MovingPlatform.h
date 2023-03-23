@@ -9,6 +9,8 @@ public:
 
     void Update(sf::Time frameTime) override;
 
+    void SetPosition(sf::Vector2f newPosition) override;
+
 private:
 
     const float SPEED;

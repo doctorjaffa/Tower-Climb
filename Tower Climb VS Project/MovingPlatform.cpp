@@ -4,13 +4,18 @@
 
 MovingPlatform::MovingPlatform(sf::Vector2f newPos1, sf::Vector2f newPos2)
 	: Platform()
-	, SPEED()
+	, SPEED(100)
 	, POS1(newPos1)
 	, POS2(newPos2)
 	, targetPoint(&POS2)
 	, velocity(0, 0)
 {
 	sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/MovingPlatform.png"));
+
+	// Update our velocity 
+	sf::Vector2f vectorToNewTarget = *targetPoint - GetPosition();
+	vectorToNewTarget = VectorHelper::Normalise(vectorToNewTarget);
+	velocity = vectorToNewTarget * SPEED;
 }
 
 void MovingPlatform::Update(sf::Time frameTime)
@@ -37,13 +42,23 @@ void MovingPlatform::Update(sf::Time frameTime)
 			targetPoint = &POS2;
 		else
 			targetPoint = &POS1;
-
-		// Update our velocity 
-		sf::Vector2f vectorToNewTarget = *targetPoint - newPos;
 		
 	}
+	else
+	{
+		newPos += toMove;
+	}
 
-	newPos += toMove;
-
+	SetPosition(newPos);
 	
+}
+
+void MovingPlatform::SetPosition(sf::Vector2f newPosition)
+{
+	Platform::SetPosition(newPosition);
+
+	// Update our velocity 
+	sf::Vector2f vectorToNewTarget = *targetPoint - GetPosition();
+	vectorToNewTarget = VectorHelper::Normalise(vectorToNewTarget);
+	velocity = vectorToNewTarget * SPEED;
 }
