@@ -116,6 +116,26 @@ void Player::Update(sf::Time frameTime)
     }
 }
 
+void Player::HandleCollision(SpriteObject other)
+{
+    sf::Vector2f depth = GetCollisionDepth(other);
+    sf::Vector2f newPos = GetPosition();
+
+    if (abs(depth.x) < abs(depth.y)) 
+    {
+        // Move in X direction
+        newPos.x += depth.x;
+    }
+    else
+    {
+        // Move in Y direction
+        newPos.y += depth.y;
+    }
+
+    SetPosition(newPos);
+
+}
+
 void Player::UpdateAcceleration()
 {
     const float ACCEL = 8500;
