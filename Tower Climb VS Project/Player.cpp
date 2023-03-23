@@ -38,7 +38,7 @@ void Player::Update(sf::Time frameTime)
             velocity = velocity + acceleration * frameTime.asSeconds();
 
             // Drag
-            velocity = velocity - velocity * DRAG_MULT * frameTime.asSeconds();
+            velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
 
             // Update acceleration
             UpdateAcceleration();
@@ -55,7 +55,7 @@ void Player::Update(sf::Time frameTime)
             velocity = velocity + acceleration * frameTime.asSeconds();
 
             // Drag
-            velocity = velocity - velocity * DRAG_MULT * frameTime.asSeconds();
+            velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
 
             SetPosition(GetPosition() + velocity * frameTime.asSeconds());
         }
@@ -68,7 +68,7 @@ void Player::Update(sf::Time frameTime)
             velocity = velocity + acceleration * frameTime.asSeconds();
 
             // Drag
-            velocity = velocity - velocity * DRAG_MULT * frameTime.asSeconds();
+            velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
 
             SetPosition(GetPosition() + velocity * frameTime.asSeconds());
 
@@ -118,6 +118,8 @@ void Player::Update(sf::Time frameTime)
 
 void Player::HandleCollision(SpriteObject other)
 {
+    const float JUMPSPEED = 1000;
+
     sf::Vector2f depth = GetCollisionDepth(other);
     sf::Vector2f newPos = GetPosition();
 
@@ -125,11 +127,21 @@ void Player::HandleCollision(SpriteObject other)
     {
         // Move in X direction
         newPos.x += depth.x;
+        velocity.x = 0;
+        acceleration.x = 0;
     }
     else
     {
         // Move in Y direction
         newPos.y += depth.y;
+        velocity.y = 0;
+        acceleration.y = 0;
+
+        // If we collided from above
+        if (depth.y < 0)
+        {
+            velocity.y = -JUMPSPEED;
+        }
     }
 
     SetPosition(newPos);
@@ -139,10 +151,11 @@ void Player::HandleCollision(SpriteObject other)
 void Player::UpdateAcceleration()
 {
     const float ACCEL = 8500;
+    const float GRAVITY = 1000;
 
     // Update acceleration
     acceleration.x = 0;
-    acceleration.y = 0;
+    acceleration.y = GRAVITY;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -152,13 +165,4 @@ void Player::UpdateAcceleration()
     {
         acceleration.x = ACCEL;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
-        acceleration.y = -ACCEL;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        acceleration.y = ACCEL;
-    }
-
 }
