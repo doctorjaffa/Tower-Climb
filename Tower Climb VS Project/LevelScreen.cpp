@@ -1,61 +1,54 @@
 #include "LevelScreen.h"
 #include "AssetManager.h"
+#include "Platform.h"
+#include "MovingPlatform.h"
+#include "BreakingPlatform.h"
+#include "DeadlyPlatform.h"
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, tempDoor()
-	, tempPlatform()
-	, tempMovingPlatform(sf::Vector2f(0,700), sf::Vector2f(1000, 700))
-	, tempBreakingPlatform()
-	, tempDeadlyPlatform()
+	, platforms()
 {
 	player.SetPosition(500, 500);
-	tempPlatform.SetPosition(500, 650);
-	tempMovingPlatform.SetPosition(sf::Vector2f(500, 700));
-	tempBreakingPlatform.SetPosition(750, 1000);
-	tempDeadlyPlatform.SetPosition(1000, 700);
 	tempDoor.SetPosition(500, 500);
+
+	platforms.push_back(new Platform(sf::Vector2f(500, 650)));
+	platforms.push_back(new MovingPlatform(sf::Vector2f(500, 700), sf::Vector2f(0, 700), sf::Vector2f(1000, 700)));
+	platforms.push_back(new BreakingPlatform(sf::Vector2f(750, 1000)));
+	platforms.push_back(new DeadlyPlatform(sf::Vector2f(1000, 700)));
+
 }
 
 void LevelScreen::Update(sf::Time frameTime)
 {
 	player.Update(frameTime);
-	tempMovingPlatform.Update(frameTime);
+
+	for (int i = 0; i < platforms.size(); ++i)
+	{
+		platforms[i]->Update(frameTime);
+	}
 
 	player.SetColliding(false);
-	tempPlatform.SetColliding(false);
-	tempMovingPlatform.SetColliding(false);
-	tempBreakingPlatform.SetColliding(false);
-	tempDeadlyPlatform.SetColliding(false);
 	tempDoor.SetColliding(false);
 
-	if (player.CheckCollision(tempPlatform))
+	for (int i = 0; i < platforms.size(); ++i)
 	{
-		player.SetColliding(true);
-		tempPlatform.SetColliding(true);
-		player.HandleCollision(tempPlatform);
+		platforms[i]->SetColliding(false);
 	}
-	if (player.CheckCollision(tempMovingPlatform))
+
+	for (int i = 0; i < platforms.size(); ++i)
 	{
-		player.SetColliding(true);
-		tempMovingPlatform.SetColliding(true);
-		player.HandleCollision(tempMovingPlatform);
+		if (platforms[i]->CheckCollision(player))
+		{
+			player.SetColliding(true);
+			platforms[i]->SetColliding(true);
+			player.HandleCollision(*platforms[i]);
+			platforms[i]->HandleCollision(player);
+		}
 	}
-	if (player.CheckCollision(tempBreakingPlatform))
-	{
-		player.SetColliding(true);
-		tempBreakingPlatform.SetColliding(true);
-		player.HandleCollision(tempBreakingPlatform);
-		tempBreakingPlatform.HandleCollision(player);
-	}
-	if (player.CheckCollision(tempDeadlyPlatform))
-	{
-		player.SetColliding(true);
-		tempDeadlyPlatform.SetColliding(true);
-		player.HandleCollision(tempDeadlyPlatform);
-		tempDeadlyPlatform.HandleCollision(player);
-	}
+
 	if (player.CheckCollision(tempDoor))
 	{
 		player.SetColliding(true);
@@ -67,9 +60,11 @@ void LevelScreen::Update(sf::Time frameTime)
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
 	tempDoor.Draw(target);
-	tempPlatform.Draw(target);
-	tempMovingPlatform.Draw(target);
-	tempBreakingPlatform.Draw(target);
-	tempDeadlyPlatform.Draw(target);
+
+	for (int i = 0; i < platforms.size(); ++i)
+	{
+		platforms[i]->Draw(target);
+	}
+
 	player.Draw(target);
 }

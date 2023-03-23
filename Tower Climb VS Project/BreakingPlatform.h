@@ -6,7 +6,7 @@ class BreakingPlatform :
 
 public:
 
-    BreakingPlatform();
+    BreakingPlatform(sf::Vector2f newPosition);
 
     void HandleCollision(SpriteObject& other) override;
 
