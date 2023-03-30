@@ -13,6 +13,9 @@ public:
 
 	void SetPosition(sf::Vector2f newPosition);
 
+	void StartAnimation();
+	void ResetPosition();
+
 private:
 
 	sf::Sprite background;
@@ -20,5 +23,8 @@ private:
 	sf::Text message;
 	sf::Vector2f position;
 	sf::RenderWindow* window;
+
+	bool animatingIn;
+	sf::Clock animationClock;
 };
 

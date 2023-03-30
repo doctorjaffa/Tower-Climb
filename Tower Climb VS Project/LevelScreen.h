@@ -24,6 +24,8 @@ public:
 
 private:
 
+    void Restart();
+
     Player player;
     Door tempDoor;
     EndPanel endPanel;

@@ -1,5 +1,6 @@
 #include "EndPanel.h"
 #include "AssetManager.h"
+#include "Easing.h"
 
 EndPanel::EndPanel(sf::RenderWindow* newWindow)
 	: background()
@@ -7,6 +8,8 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow)
 	, message()
 	, position(0,0)
 	, window(newWindow)
+	, animatingIn(false)
+	, animationClock()
 {
 	background.setTexture(AssetManager::RequestTexture("Assets/Graphics/Panel.png"));
 	background.setScale(5.0f, 5.0f);
@@ -21,13 +24,31 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow)
 	message.setString("Press R to restart, \nor ESCAPE to quit.");
 	message.setFillColor(sf::Color::Black);
 
-	float xPos = window->getSize().x * 0.5f - background.getGlobalBounds().width * 0.5f;
-	float yPos = window->getSize().y * 0.5f - background.getGlobalBounds().height * 0.5f;
-	SetPosition(sf::Vector2f(xPos, yPos));
+	ResetPosition();
 }
 
 void EndPanel::Update(sf::Time frameTime)
 {
+	if (animatingIn)
+	{
+		float xPos = window->getSize().x * 0.5f - background.getGlobalBounds().width * 0.5f;
+		float yPos = window->getSize().y;
+		float finalYPos = window->getSize().y * 0.5f - background.getGlobalBounds().height * 0.5f;
+
+		sf::Vector2f begin(xPos, yPos);
+		sf::Vector2f change(xPos, finalYPos - yPos);
+		float duration = 1.0f;
+		float time = animationClock.getElapsedTime().asSeconds();
+
+		sf::Vector2f newPosition = Easing::EaseInQuad(begin, change, duration, time);
+		SetPosition(newPosition);
+
+		if (time >= duration)
+		{
+			SetPosition(begin + change);
+			animatingIn = false;
+		}
+	}
 }
 
 void EndPanel::Draw(sf::RenderTarget& target)
@@ -49,4 +70,17 @@ void EndPanel::SetPosition(sf::Vector2f newPosition)
 	float messageX = background.getGlobalBounds().width * 0.5f - message.getGlobalBounds().width * 0.5f;
 	float messageY = background.getGlobalBounds().height * 0.5f - message.getGlobalBounds().height * 0.5f;
 	message.setPosition(sf::Vector2f(newPosition.x + messageX, newPosition.y + messageY));
+}
+
+void EndPanel::StartAnimation()
+{
+	animatingIn = true;
+	animationClock.restart();
+}
+
+void EndPanel::ResetPosition()
+{
+	float xPos = window->getSize().x * 0.5f - background.getGlobalBounds().width * 0.5f;
+	float yPos = window->getSize().y;
+	SetPosition(sf::Vector2f(xPos, yPos));
 }
