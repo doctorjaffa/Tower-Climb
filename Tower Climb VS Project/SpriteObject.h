@@ -7,9 +7,9 @@ enum class CollisionType
 	AABB
 };
 
+
 class SpriteObject
 {
-	
 public:
 
 	SpriteObject();
@@ -30,6 +30,7 @@ public:
 
 	void SetAlive(bool newAlive);
 
+
 protected:
 
 	sf::Sprite sprite;
@@ -44,10 +45,11 @@ private:
 
 	sf::Vector2f GetCollisionCentre();
 	float GetCircleColliderRadius();
-	sf::FloatRect GetAABB(); 
+	sf::FloatRect GetAABB();
 
 	sf::Vector2f position;
 	bool colliding;
+
 
 };
 

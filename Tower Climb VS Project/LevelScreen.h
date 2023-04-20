@@ -4,7 +4,6 @@
 #include "Door.h"
 #include "EndPanel.h"
 #include <SFML/Graphics.hpp>
-#include <vector>
 
 class Game;
 class Platform;
@@ -14,7 +13,6 @@ class LevelScreen :
 {
 
 public:
-
     LevelScreen(Game* newGamePointer);
 
     void Update(sf::Time frameTime) override;
@@ -27,10 +25,11 @@ private:
     void Restart();
 
     Player player;
-    Door tempDoor;
+    Door testDoor;
     EndPanel endPanel;
     bool gameRunning;
 
     std::vector<Platform*> platforms;
+
 };
 

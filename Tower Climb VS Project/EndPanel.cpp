@@ -16,12 +16,12 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow)
 
 	title.setFont(AssetManager::RequestFont("Assets/Fonts/mainFont.ttf"));
 	title.setCharacterSize(70);
-	//title.setString("YOU WIN!");
+	title.setString("YOU WIN!");
 	title.setFillColor(sf::Color::Black);
 
 	message.setFont(AssetManager::RequestFont("Assets/Fonts/mainFont.ttf"));
 	message.setCharacterSize(30);
-	message.setString("Press R to restart, \nor ESCAPE to quit.");
+	message.setString("Press R to restart,\nor ESCAPE to quit.");
 	message.setFillColor(sf::Color::Black);
 
 	ResetPosition();
@@ -36,7 +36,7 @@ void EndPanel::Update(sf::Time frameTime)
 		float finalYPos = window->getSize().y * 0.5f - background.getGlobalBounds().height * 0.5f;
 
 		sf::Vector2f begin(xPos, yPos);
-		sf::Vector2f change(xPos, finalYPos - yPos);
+		sf::Vector2f change(0, finalYPos - yPos);
 		float duration = 1.0f;
 		float time = animationClock.getElapsedTime().asSeconds();
 
@@ -45,54 +45,39 @@ void EndPanel::Update(sf::Time frameTime)
 
 		if (time >= duration)
 		{
-			SetPosition(begin + change);
+			SetPosition(begin+change);
 			animatingIn = false;
 		}
-
-		if (hasWon)
-		{
-			title.setString("YOU WIN!");
-		} 
-		else
-		{
-			title.setString("YOU LOSE!");
-		}
 	}
+
 }
 
 void EndPanel::Draw(sf::RenderTarget& target)
 {
 	target.draw(background);
-	target.draw(title);
 	target.draw(message);
+	target.draw(title);
 }
 
 void EndPanel::SetPosition(sf::Vector2f newPosition)
 {
-	background.setPosition(sf::Vector2f(newPosition));
+	background.setPosition(newPosition);
 
-	// Center the title on the x direction
+	// center the title on the x direction
 	float titleX = background.getGlobalBounds().width * 0.5f - title.getGlobalBounds().width * 0.5f;
-	title.setPosition(sf::Vector2f(newPosition.x + titleX, newPosition.y + 50));
+	title.setPosition(sf::Vector2f(newPosition.x+ titleX, newPosition.y+50));
 
-	// Center the message on the x and y direction
+	// center the message in the x and y direction
 	float messageX = background.getGlobalBounds().width * 0.5f - message.getGlobalBounds().width * 0.5f;
 	float messageY = background.getGlobalBounds().height * 0.5f - message.getGlobalBounds().height * 0.5f;
 	message.setPosition(sf::Vector2f(newPosition.x + messageX, newPosition.y + messageY));
-}
-
-void EndPanel::SetWinState(bool newHasWon)
-{
-	if (newHasWon == true)
-	{
-		hasWon = true;
-	}
 }
 
 void EndPanel::StartAnimation()
 {
 	animatingIn = true;
 	animationClock.restart();
+
 }
 
 void EndPanel::ResetPosition()

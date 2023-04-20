@@ -18,5 +18,6 @@ private:
     const sf::Vector2f POS2;
     const sf::Vector2f* targetPoint;
     sf::Vector2f velocity;
+
 };
 

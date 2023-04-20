@@ -1,66 +1,70 @@
 #include "AssetManager.h"
 
 std::map<std::string, sf::Texture> AssetManager::textures;
-std::map<std::string, sf::SoundBuffer> AssetManager::soundBuffers;
 std::map<std::string, sf::Font> AssetManager::fonts;
+std::map<std::string, sf::SoundBuffer> AssetManager::soundBuffers;
 
-sf::Texture& AssetManager::RequestTexture(std::string textureName)
+
+sf::Texture& AssetManager::RequestTexture(std::string assetName)
 {
-    // TODO: insert return statement here
-    auto pairFound = textures.find(textureName);
+    auto pairFound = textures.find(assetName);
 
     if (pairFound != textures.end())
     {
-        //Found an existing texture - use it.
-        return pairFound->second; //The value in the key-value pair.
+        // We found an existing texture! Use it
+        return pairFound->second; // the value in the key-value pair
     }
     else
     {
-        sf::Texture& newTexture = textures[textureName];
-        newTexture.loadFromFile(textureName);
+        sf::Texture& newTexture = textures[assetName];
+        newTexture.loadFromFile(assetName);
         return newTexture;
     }
+
+
 }
 
-sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string soundBufferName)
+sf::Font& AssetManager::RequestFont(std::string assetName)
 {
-    // TODO: insert return statement here
-    auto pairFound = soundBuffers.find(soundBufferName);
-
-    if (pairFound != soundBuffers.end())
-    {
-        //Found an existing sound buffer - use it.
-        return pairFound->second; 
-    }
-    else
-    {
-        sf::SoundBuffer& newSoundBuffer = soundBuffers[soundBufferName];
-        newSoundBuffer.loadFromFile(soundBufferName);
-        return newSoundBuffer;
-    }
-}
-
-sf::Font& AssetManager::RequestFont(std::string fontName)
-{
-    // TODO: insert return statement here
-    auto pairFound = fonts.find(fontName);
+    auto pairFound = fonts.find(assetName);
 
     if (pairFound != fonts.end())
     {
-        //Found an existing font - use it.
-        return pairFound->second;
+        // We found an existing texture! Use it
+        return pairFound->second; // the value in the key-value pair
     }
     else
     {
-        sf::Font& newFont = fonts[fontName];
-        newFont.loadFromFile(fontName);
+        sf::Font& newFont = fonts[assetName];
+        newFont.loadFromFile(assetName);
         return newFont;
     }
+
+
+}
+
+sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string assetName)
+{
+    auto pairFound = soundBuffers.find(assetName);
+
+    if (pairFound != soundBuffers.end())
+    {
+        // We found an existing texture! Use it
+        return pairFound->second; // the value in the key-value pair
+    }
+    else
+    {
+        sf::SoundBuffer& newSoundBuffer = soundBuffers[assetName];
+        newSoundBuffer.loadFromFile(assetName);
+        return newSoundBuffer;
+    }
+
+
 }
 
 void AssetManager::DestroyAllAssets()
 {
     textures.clear();
-    soundBuffers.clear();
     fonts.clear();
+    soundBuffers.clear();
 }

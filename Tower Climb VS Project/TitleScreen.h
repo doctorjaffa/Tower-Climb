@@ -9,7 +9,6 @@ class TitleScreen :
 {
 
 public:
-
     TitleScreen(Game* newGamePointer);
 
     void Update(sf::Time frameTime) override;

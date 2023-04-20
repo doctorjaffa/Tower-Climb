@@ -1,168 +1,173 @@
 #include "Player.h"
 #include "AssetManager.h"
 
+
 enum class PhysicsType {
-    FORWARD_EULER,
-    BACKWARD_EULER,
-    SYMPLECTIC_EULER,
-    POSITION_VERLET,
-    VELOCITY_VERLET
+	FORWARD_EULER,
+	BACKWARD_EULER,
+	SYMPLECTIC_EULER,
+	POSITION_VERLET,
+	VELOCITY_VERLET
 };
 
 
 Player::Player()
 	: SpriteObject()
-    , twoFramesOldPos(100, 300)
-	, velocity()
-	, acceleration()
+	, twoFramesOldPos(100,300)
+	, velocity(0,0)
+	, acceleration(0,0)
 {
 	sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/PlayerStand.png"));
 
-    collisionOffset = sf::Vector2f(0, 30);
-    collisionScale = sf::Vector2f(0.5f, 0.5f);
-    collisionType = CollisionType::CIRCLE;
+	collisionOffset = sf::Vector2f(0, 30);
+	collisionScale = sf::Vector2f(0.5f, 0.5f);
+	collisionType = CollisionType::CIRCLE;
 }
 
 void Player::Update(sf::Time frameTime)
 {
-    const float DRAG_MULT = 10.0f;
-    const PhysicsType physics = PhysicsType::FORWARD_EULER;
+	const float DRAG_MULT = 10.0f;
+	const PhysicsType physics = PhysicsType::FORWARD_EULER;
 
-    switch (physics)
-    {
-    case PhysicsType::FORWARD_EULER:
-        {
-            // EXPLICIT EULER (FORWARD EULER)
+	switch (physics)
+	{
+	case PhysicsType::FORWARD_EULER:
+		{
+			// EXPLICIT EULER (FORWARD EULER)
+			SetPosition( GetPosition() + velocity * frameTime.asSeconds() );
+			velocity = velocity + acceleration * frameTime.asSeconds();
 
-            SetPosition(GetPosition() + velocity * frameTime.asSeconds());
-            velocity = velocity + acceleration * frameTime.asSeconds();
+			// drag
+			velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
 
-            // Drag
-            velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+			// Update acceleration
+			UpdateAcceleration();
+		}
+		break;
 
-            // Update acceleration
-            UpdateAcceleration();
-        }
-        break;
+	case PhysicsType::BACKWARD_EULER:
+		{
+			// IMPLICIT / BACKWARD EULER
 
-    case PhysicsType::BACKWARD_EULER:
-        {
-            // IMPLICIT EULER (BACKWARD EULER) 
-        
-            // Update acceleration
-            UpdateAcceleration();
+			// Update acceleration
+			UpdateAcceleration();
 
-            velocity = velocity + acceleration * frameTime.asSeconds();
+			velocity = velocity + acceleration * frameTime.asSeconds();
 
-            // Drag
-            velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+			// drag
+			velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
 
-            SetPosition(GetPosition() + velocity * frameTime.asSeconds());
-        }
-        break;
+			SetPosition( GetPosition() + velocity * frameTime.asSeconds() );
 
-    case PhysicsType::SYMPLECTIC_EULER:
-        {
-            // SEMI-IMPLICIT EULER (SYMPLECTIC_EULER)
+		}
+		break;
 
-            velocity = velocity + acceleration * frameTime.asSeconds();
+	case PhysicsType::SYMPLECTIC_EULER:
+		{
+			// SEMI-IMPLICIT / SYMPLECTIC_EULER
 
-            // Drag
-            velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+			velocity = velocity + acceleration * frameTime.asSeconds();
 
-            SetPosition(GetPosition() + velocity * frameTime.asSeconds());
+			// drag
+			velocity = velocity - velocity * DRAG_MULT * frameTime.asSeconds();
 
-            // Update acceleration
-            UpdateAcceleration();
-        }
-        break;
+			SetPosition( GetPosition() + velocity * frameTime.asSeconds() );
 
-    case PhysicsType::POSITION_VERLET:
-    {
-        // Update acceleration
-        UpdateAcceleration();
+			// Update acceleration
+			UpdateAcceleration();
+		}
+		break;
 
-        sf::Vector2f lastFramePos = GetPosition();
+	case PhysicsType::POSITION_VERLET:
+	{
+		// Update acceleration
+		UpdateAcceleration();
 
-        // Current frame's position 
-        SetPosition(2.0f*lastFramePos - twoFramesOldPos + acceleration * frameTime.asSeconds() * frameTime.asSeconds());
+		sf::Vector2f lastFramePos = GetPosition();
 
-        // Two frames ago (for next frame)
-        twoFramesOldPos = lastFramePos;
-    }
-    break;
+		// Calculate current fram's position
+		SetPosition(2.0f * lastFramePos - twoFramesOldPos + acceleration * frameTime.asSeconds() * frameTime.asSeconds());
 
-    case PhysicsType::VELOCITY_VERLET:
-    {
-        // Get half frame velocity using previous frame's acceleration
-        sf::Vector2f halfFrameVelocity = velocity + acceleration * frameTime.asSeconds() / 2.0f;
+		// Two frames ago (for next frame)
+		twoFramesOldPos = lastFramePos;
+	}
+	break;
 
-        //Get new frame's position using half frame velocity
-        SetPosition(GetPosition() + halfFrameVelocity * frameTime.asSeconds());
+	case PhysicsType::VELOCITY_VERLET:
+	{
+		// VELOCITY VERLET / LEAP FROG
 
-        // Update acceleration
-        UpdateAcceleration();
+		// Get half frame velocity using
+		// previous frame's acceleration
+		sf::Vector2f halfFrameVelocity = velocity + acceleration * frameTime.asSeconds() / 2.0f;
 
-        // Get new frame's velocity using half frame velocity and updated acceleration
-        velocity = halfFrameVelocity + acceleration * frameTime.asSeconds() / 2.0f;
+		// Get new frame's position using half frame velocity
+		SetPosition( GetPosition() + halfFrameVelocity * frameTime.asSeconds() );
 
-        // Drag
-        velocity = velocity - velocity * DRAG_MULT * frameTime.asSeconds();
-    }
-    break;
+		// Update our current acceleration
+		UpdateAcceleration();
 
-    default:
-        break;
-    }
+		// Get new frame's velocity using half frame velocity and
+		// updated acceleration
+		velocity = halfFrameVelocity + acceleration * frameTime.asSeconds() / 2.0f;
+
+		// drag
+		velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+	}
+	break;
+
+	default:
+		break;
+	}
 }
 
 void Player::HandleCollision(SpriteObject& other)
 {
-    const float JUMPSPEED = 1000;
+	const float JUMPSPEED = 800;
+	sf::Vector2f depth = GetCollisionDepth(other);
+	sf::Vector2f newPos = GetPosition();
 
-    sf::Vector2f depth = GetCollisionDepth(other);
-    sf::Vector2f newPos = GetPosition();
+	if (abs(depth.x) < abs(depth.y))
+	{
+		// Move in X direction
+		newPos.x += depth.x;
+		velocity.x = 0;
+		acceleration.x = 0;
+	}
+	else
+	{
+		// Move in y direction
+		newPos.y += depth.y;
+		velocity.y = 0;
+		acceleration.y = 0;
 
-    if (abs(depth.x) < abs(depth.y)) 
-    {
-        // Move in X direction
-        newPos.x += depth.x;
-        velocity.x = 0;
-        acceleration.x = 0;
-    }
-    else
-    {
-        // Move in Y direction
-        newPos.y += depth.y;
-        velocity.y = 0;
-        acceleration.y = 0;
+		// If we collided from above
+		if (depth.y < 0)
+		{
+			velocity.y = -JUMPSPEED;
+		}
+	}
 
-        // If we collided from above
-        if (depth.y < 0)
-        {
-            velocity.y = -JUMPSPEED;
-        }
-    }
-
-    SetPosition(newPos);
-
+	SetPosition(newPos);
 }
 
 void Player::UpdateAcceleration()
 {
-    const float ACCEL = 8500;
-    const float GRAVITY = 1000;
+	const float ACCEL = 10000;
+	const float GRAVITY = 1000;
 
-    // Update acceleration
-    acceleration.x = 0;
-    acceleration.y = GRAVITY;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    {
-        acceleration.x = -ACCEL;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    {
-        acceleration.x = ACCEL;
-    }
+	// Update acceleration
+	acceleration.x = 0;
+	acceleration.y = GRAVITY;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		acceleration.x = -ACCEL;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		acceleration.x = ACCEL;
+	}
 }
+
+
+

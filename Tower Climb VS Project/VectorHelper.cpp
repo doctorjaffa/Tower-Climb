@@ -7,8 +7,6 @@ float VectorHelper::SquareMagnitude(sf::Vector2f vec)
 
 float VectorHelper::Magnitude(sf::Vector2f vec)
 {
-	float squareMag = vec.x * vec.x + vec.y * vec.y;
-	
 	return sqrt(SquareMagnitude(vec));
 }
 
@@ -16,8 +14,8 @@ sf::Vector2f VectorHelper::Normalise(sf::Vector2f vec)
 {
 	float mag = Magnitude(vec);
 
-	vec.x /= mag;
-	vec.y /= mag;
+	vec.x = vec.x / mag;
+	vec.y = vec.y / mag;
 
 
 	return vec;

@@ -6,20 +6,20 @@
 
 int main()
 {
-    //Initliase the random number generator.
+    // Initialise the random number generator
     srand(time(NULL));
 
-    //Create the game.
-    Game gameInstance; //Default constructor.
+    // Create the game
+    Game gameInstance; // default constructor
 
-    //This will not end until the game is over.
+    // This will not end until the game is over
     gameInstance.RunGameLoop();
 
-    //If we get here, the loop exited, so the game is over.
-
-    // //Clean up assets.
+    // If we get here, the loop exited, so the game is over
+    
+    // Clean up assets
     AssetManager::DestroyAllAssets();
-
-    //End the program by returning.
+    
+    // End the program by returning
     return 0;
 }

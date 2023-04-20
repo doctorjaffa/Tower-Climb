@@ -1,5 +1,4 @@
 #include "TitleScreen.h"
-#include "AssetManager.h"
 
 TitleScreen::TitleScreen(Game* newGamePointer)
 	: Screen(newGamePointer)

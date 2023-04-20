@@ -1,11 +1,8 @@
 #include "DeadlyPlatform.h"
 #include "AssetManager.h"
-#include "LevelScreen.h"
-#include "EndPanel.h"
 
-DeadlyPlatform::DeadlyPlatform(sf::Vector2f newPosition, LevelScreen* newLevelScreen)
-	: Platform(newPosition)
-	, levelScreen(newLevelScreen)
+DeadlyPlatform::DeadlyPlatform(sf::Vector2f newPosition)
+	:Platform(newPosition)
 {
 	sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/DeadlyPlatform.png"));
 }
@@ -13,5 +10,4 @@ DeadlyPlatform::DeadlyPlatform(sf::Vector2f newPosition, LevelScreen* newLevelSc
 void DeadlyPlatform::HandleCollision(SpriteObject& other)
 {
 	other.SetAlive(false);
-	levelScreen->TriggerEndState(true);
 }

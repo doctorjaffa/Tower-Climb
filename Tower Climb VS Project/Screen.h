@@ -16,5 +16,6 @@ public:
 protected:
 
 	Game* gamePointer;
+
 };
 

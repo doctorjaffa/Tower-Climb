@@ -7,9 +7,8 @@ Door::Door(LevelScreen* newLevelScreen)
 	, levelScreen(newLevelScreen)
 {
 	sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/Door.png"));
-	collisionOffset = sf::Vector2f(0, 10);
-	collisionScale = sf::Vector2f(0.5f, 0.9f);
-	collisionType = CollisionType::AABB;
+	collisionOffset = sf::Vector2f(0, 20.0f);
+	collisionScale = sf::Vector2f(0.45, 1.0f);
 }
 
 void Door::HandleCollision(SpriteObject& other)

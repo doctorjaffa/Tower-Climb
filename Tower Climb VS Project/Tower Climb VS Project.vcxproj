@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5fb07eec-d2ba-4d17-9461-3209b7bc1645}</ProjectGuid>
+    <ProjectGuid>{9663b316-063a-4ceb-adcd-117b9b53c145}</ProjectGuid>
     <RootNamespace>Tower_Climb_VS_Project</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
