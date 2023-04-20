@@ -12,6 +12,7 @@ public:
 	void Draw(sf::RenderTarget& target);
 
 	void SetPosition(sf::Vector2f newPosition);
+	void SetWinState(bool newHasWon);
 
 	void StartAnimation();
 	void ResetPosition();
@@ -26,5 +27,7 @@ private:
 
 	bool animatingIn;
 	sf::Clock animationClock;
+
+	bool hasWon = false;
 };
 

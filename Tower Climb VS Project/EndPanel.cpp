@@ -16,7 +16,7 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow)
 
 	title.setFont(AssetManager::RequestFont("Assets/Fonts/mainFont.ttf"));
 	title.setCharacterSize(70);
-	title.setString("YOU WIN!");
+	//title.setString("YOU WIN!");
 	title.setFillColor(sf::Color::Black);
 
 	message.setFont(AssetManager::RequestFont("Assets/Fonts/mainFont.ttf"));
@@ -48,6 +48,15 @@ void EndPanel::Update(sf::Time frameTime)
 			SetPosition(begin + change);
 			animatingIn = false;
 		}
+
+		if (hasWon)
+		{
+			title.setString("YOU WIN!");
+		} 
+		else
+		{
+			title.setString("YOU LOSE!");
+		}
 	}
 }
 
@@ -70,6 +79,14 @@ void EndPanel::SetPosition(sf::Vector2f newPosition)
 	float messageX = background.getGlobalBounds().width * 0.5f - message.getGlobalBounds().width * 0.5f;
 	float messageY = background.getGlobalBounds().height * 0.5f - message.getGlobalBounds().height * 0.5f;
 	message.setPosition(sf::Vector2f(newPosition.x + messageX, newPosition.y + messageY));
+}
+
+void EndPanel::SetWinState(bool newHasWon)
+{
+	if (newHasWon == true)
+	{
+		hasWon = true;
+	}
 }
 
 void EndPanel::StartAnimation()

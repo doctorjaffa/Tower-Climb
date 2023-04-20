@@ -23,6 +23,11 @@ void LevelScreen::Update(sf::Time frameTime)
 	{
 		player.Update(frameTime);
 
+		if (player.GetPosition().y > gamePointer->GetWindow()->getSize().y)
+		{
+			TriggerEndState(true);
+		}
+
 		for (int i = 0; i < platforms.size(); ++i)
 		{
 			platforms[i]->Update(frameTime);
@@ -49,6 +54,7 @@ void LevelScreen::Update(sf::Time frameTime)
 
 		if (player.CheckCollision(tempDoor))
 		{
+			endPanel.SetWinState(true);
 			player.SetColliding(true);
 			tempDoor.SetColliding(true);
 			tempDoor.HandleCollision(player);
@@ -110,7 +116,7 @@ void LevelScreen::Restart()
 	platforms.push_back(new Platform(sf::Vector2f(900, 650)));
 	platforms.push_back(new MovingPlatform(sf::Vector2f(500, 700), sf::Vector2f(0, 700), sf::Vector2f(1000, 700)));
 	platforms.push_back(new BreakingPlatform(sf::Vector2f(750, 1000)));
-	platforms.push_back(new DeadlyPlatform(sf::Vector2f(1000, 700)));
+	platforms.push_back(new DeadlyPlatform(sf::Vector2f(1000, 700), this));
 
 	gameRunning = true;
 }
